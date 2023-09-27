@@ -16,8 +16,8 @@ class apiService
 
     public function callApi($url): array
     {
-            $response = $this->tmbdClient->request('GET', $url);
-            $content = $response->toArray();
-            return $content;
+        $response = $this->tmbdClient->request('GET', $url);
+        $content = $response->toArray();
+        return $content;
     }
 }

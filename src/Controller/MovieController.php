@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Theme;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,12 +38,27 @@ class MovieController extends AbstractController
     }
 
      #[Route('/{id}')]
-    public function getMovieById(apiService $apiService): Response
+    public function getMovieById(apiService $apiService, array $_route_params): Response
     {
-        $response = $apiService->callApi('id');
+        $response = $apiService->callApi('movie/'.$_route_params['id']);
+        $movie = new Movie();
+        $movie->setTitle($response['title']);
+        $movie->setDescription($response['overview']);
+        $movie->setId($response['id']);
+        $movie->setIsAdult($response['adult']);
+        $movie->setRating($response['vote_average']);
+        $movie->setReleaseDate(new \DateTime($response['release_date']));
+        $movie->setPicturePath("https://image.tmdb.org/t/p/original".$response['poster_path']);
 
-        return $this->render('movie.html.twig', [
-            'movies' => null
+        $movie->setThemes(new ArrayCollection($response['genres']));
+
+        /*
+        foreach ($response['genres'] as $genre){
+            $movie->addTheme(new Theme($genre));
+        }*/
+
+        return $this->render('movie-details.html.twig', [
+            'movie' => $movie
         ]);
     }
 }

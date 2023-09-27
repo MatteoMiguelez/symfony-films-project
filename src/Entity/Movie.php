@@ -32,6 +32,8 @@ class Movie
 
     private Collection $note;
 
+    private Collection $actors;
+
     private ?bool $isAdult;
 
     public function __construct()
@@ -214,6 +216,39 @@ class Movie
     public function setIsAdult(?bool $isAdult): void
     {
         $this->isAdult = $isAdult;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getActors(): Collection
+    {
+        return $this->actors;
+    }
+
+    /**
+     * @param Collection $actors
+     */
+    public function setActors(Collection $actors): void
+    {
+        $this->actors = $actors;
+    }
+
+    public function addActor(Actor $actor): static
+    {
+        if (!$this->actors->contains($actor)){
+            $this->actors->add($actor);
+        }
+
+        return $this;
+    }
+
+    public function removeActor(Actor $actor) : static
+    {
+        if ($this->actors->removeElement($actor)){
+            $actor->removeMovie($this);
+        }
+        return $this;
     }
 
     public function addTheme(Theme $theme): void
