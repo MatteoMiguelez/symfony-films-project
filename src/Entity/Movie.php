@@ -30,7 +30,7 @@ class Movie
 
     private Collection $themes;
 
-    private Collection $note;
+    private Collection $reviews;
 
     private Collection $actors;
 
@@ -39,7 +39,8 @@ class Movie
     public function __construct()
     {
         $this->themes = new ArrayCollection();
-        $this->note = new ArrayCollection();
+        $this->actors = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     /**
@@ -189,17 +190,17 @@ class Movie
     /**
      * @return Collection
      */
-    public function getNote(): Collection
+    public function getReviews(): Collection
     {
-        return $this->note;
+        return $this->reviews;
     }
 
     /**
-     * @param Collection $note
+     * @param Collection $reviews
      */
-    public function setNote(Collection $note): void
+    public function setReviews(Collection $reviews): void
     {
-        $this->note = $note;
+        $this->reviews = $reviews;
     }
 
     /**
@@ -255,7 +256,6 @@ class Movie
     {
         if(!$this->themes->contains($theme)){
             $this->themes->add($theme);
-            $theme->addMovie($this);
         }
     }
 
@@ -264,6 +264,22 @@ class Movie
         if($this->themes->remove($theme)){
             if($theme->getMovies() === $this){
                 $theme->removeMovie($this);
+            }
+        }
+    }
+
+    public function addReview(Review $review): void
+    {
+        if(!$this->reviews->contains($review)){
+            $this->reviews->add($review);
+        }
+    }
+
+    public function removeReview(Review $review): void
+    {
+        if($this->reviews->remove($review)){
+            if($review->getMovies() === $this){
+                $review->removeMovie($this);
             }
         }
     }

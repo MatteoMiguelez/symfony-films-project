@@ -63,7 +63,6 @@ class Theme
     {
         if(!$this->movies->contains($movie)){
             $this->movies->add($movie);
-            $movie->addTheme($this);
         }
     }
 

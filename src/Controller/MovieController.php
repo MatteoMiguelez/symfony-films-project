@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Actor;
+use App\Entity\Review;
 use App\Entity\Theme;
+use App\Kernel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,12 +53,37 @@ class MovieController extends AbstractController
         $movie->setReleaseDate(new \DateTime($response['release_date']));
         $movie->setPicturePath("https://image.tmdb.org/t/p/original".$response['poster_path']);
 
-        $movie->setThemes(new ArrayCollection($response['genres']));
-
-        /*
         foreach ($response['genres'] as $genre){
-            $movie->addTheme(new Theme($genre));
-        }*/
+            $theme = new Theme();
+            $theme->setId($genre['id']);
+            $theme->setName($genre['name']);
+            //$theme->addMovie($movie);
+            $movie->addTheme($theme);
+        }
+
+        $credits =  $apiService->callApi('movie/'.$_route_params['id'].'/credits');
+
+        foreach ($credits['cast'] as $actorInfos){
+            $actor = new Actor();
+            $actor->setId($actorInfos['id']);
+            $actor->setName($actorInfos['name']);
+            if ($actorInfos['profile_path'] != null) {
+                $actor->setPicturePath("https://image.tmdb.org/t/p/original" . $actorInfos['profile_path']);
+            }
+            $movie->addActor($actor);
+        }
+
+        $reviews = $apiService->callApi('movie/'.$_route_params['id'].'/reviews');
+
+        foreach ($reviews['results'] as $reviewInfos){
+            $review = new Review();
+            $review->setId($reviewInfos['id']);
+            $review->setNote($reviewInfos['author_details']['rating']);
+            $review->setComment($reviewInfos['content']);
+            $review->setUserName($reviewInfos['author_details']['username']);
+            //$review->setMovie($movie);
+            $movie->addReview($review);
+        }
 
         return $this->render('movie-details.html.twig', [
             'movie' => $movie

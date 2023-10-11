@@ -10,9 +10,9 @@ class Actor
 
     private ?string $name = null;
 
-    private ?string $surname = null;
-
     private ?string $biography = null;
+
+    private ?string $picturePath = null;
 
     /**
      * @return string|null
@@ -28,22 +28,6 @@ class Actor
     public function setName(?string $name): void
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSurname(): ?string
-    {
-        return $this->surname;
-    }
-
-    /**
-     * @param string|null $surname
-     */
-    public function setSurname(?string $surname): void
-    {
-        $this->surname = $surname;
     }
 
     /**
@@ -92,5 +76,21 @@ class Actor
     public function setGenre(?string $genre): void
     {
         $this->genre = $genre;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPicturePath(): ?string
+    {
+        return $this->picturePath;
+    }
+
+    /**
+     * @param string|null $name
+     */
+    public function setPicturePath(?string $picture_path): void
+    {
+        $this->picturePath = $picture_path;
     }
 }
