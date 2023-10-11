@@ -2,9 +2,6 @@
 
 namespace App\Service;
 
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class apiService
@@ -17,7 +14,25 @@ class apiService
     public function callApi($url): array
     {
         $response = $this->tmbdClient->request('GET', $url);
-        $content = $response->toArray();
-        return $content;
+        return $response->toArray();
+    }
+
+    public function getPopularMovies(): array{
+        return $this->callApi('movie/popular');
+    }
+
+    public function getMovieById(int|null $id) : array{
+        if ($id == null) return [];
+        return $this->callApi('movie/'.$id);
+    }
+
+    public function getFilmCredits(int|null $id) : array{
+        if ($id == null) return [];
+        return $this->callApi('movie/'.$id.'/credits');
+    }
+
+    public function getMovieReviews(int|null $id): array{
+        if ($id == null) return [];
+        return $this->callApi('movie/'.$id.'/reviews');
     }
 }
