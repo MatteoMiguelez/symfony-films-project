@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Factory\ActorFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ReviewFactory;
-use App\Factory\ThemeFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,22 +33,18 @@ class MovieController extends AbstractController
     {
         $filmId= $_route_params['id'];
 
-        $response = $apiService->getMovieById($filmId);
+        $movieApi = $apiService->getMovieById($filmId);
         $credits = $apiService->getFilmCredits($filmId);
         $reviews = $apiService->getMovieReviews($filmId);
 
-        $movie = MovieFactory::createMovie($response);
-
-        foreach ($response['genres'] as $genre){
-            $movie->addTheme(ThemeFactory::createTheme($genre));
-        }
+        $movie = MovieFactory::createMovie($movieApi);
 
         foreach ($credits['cast'] as $actorInfos){
             $movie->addActor(ActorFactory::createActor($actorInfos));
         }
 
         foreach ($reviews['results'] as $reviewInfos){
-            $movie->addReview(ReviewFactory::createNotice($reviewInfos));
+            $movie->addReview(ReviewFactory::createReview($reviewInfos));
         }
 
         return $this->render('movie-details.html.twig', [

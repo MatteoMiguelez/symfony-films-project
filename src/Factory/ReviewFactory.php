@@ -6,7 +6,7 @@ use App\Entity\Review;
 
 class ReviewFactory
 {
-    public static function createNotice(array $json) : Review {
+    public static function createReview(array $json) : Review {
         $review = new Review();
         $review->setNote($json['author_details']['rating'] == null ? null : (float)$json['author_details']['rating']);
         $review->setComment($json['content'] == null ? '' : $json['content']);
