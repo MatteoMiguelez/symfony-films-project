@@ -6,7 +6,7 @@ use App\Entity\Movie;
 
 class MovieFactory
 {
-    public static function createMovie(array $json): Movie
+    public static function createMovie(array $json, bool $isFavorite = false): Movie
     {
         $movie = new Movie();
         $movie->setId($json['id'] == null ? '' : $json['id']);
@@ -17,6 +17,7 @@ class MovieFactory
         $movie->setLanguage($json['original_language'] == null ? '' : $json['original_language']);
         $movie->setRating($json['vote_average'] == null ? '' : $json['vote_average']);
         $movie->setIsAdult($json['adult']);
+        $movie->setIsFavorite($isFavorite);
 
         if(isset($json['genres'])){
             foreach ($json['genres'] as $genre) {

@@ -33,6 +33,8 @@ class Movie
 
     private ?bool $isAdult;
 
+    private ?bool $isFavourite;
+
     public function __construct()
     {
         $this->themes = new ArrayCollection();
@@ -279,5 +281,21 @@ class Movie
                 $review->removeMovie($this);
             }
         }
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsFavourite(): ?bool
+    {
+        return $this->isFavourite;
+    }
+
+    /**
+     * @param bool|null $isFavourite
+     */
+    public function setIsFavorite(?bool $isFavourite): void
+    {
+        $this->isFavourite = $isFavourite;
     }
 }

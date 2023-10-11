@@ -13,8 +13,11 @@ class Favourite
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $filmId = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $serieId = null;
 
     public function getId(): ?int
     {
@@ -29,6 +32,18 @@ class Favourite
     public function setFilmId(int $filmId): static
     {
         $this->filmId = $filmId;
+
+        return $this;
+    }
+
+    public function getSerieId(): ?int
+    {
+        return $this->serieId;
+    }
+
+    public function setSerieId(?int $serieId): static
+    {
+        $this->serieId = $serieId;
 
         return $this;
     }

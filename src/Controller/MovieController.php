@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Favourite;
 use App\Factory\ActorFactory;
+use App\Factory\FavouriteFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ReviewFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,13 +17,15 @@ use App\Service\apiService;
 class MovieController extends AbstractController
 {
 
-    #[Route('/all')]
-   public function getMovies(apiService $apiService): Response
+    #[Route('/all', name:"getMovies")]
+   public function getMovies(apiService $apiService, EntityManagerInterface $entityManager): Response
     {
         $movieList = $apiService->getPopularMovies()['results'];
+        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
+
         $movies = [];
         foreach ($movieList as $movieApi){
-            $movies[] = MovieFactory::createMovie($movieApi);
+            $movies[] = MovieFactory::createMovie($movieApi, in_array($movieApi['id'], $favouritesIds));
         }
 
         return $this->render('movies.html.twig', [
@@ -28,7 +33,7 @@ class MovieController extends AbstractController
         ]);
     }
 
-     #[Route('/{id}')]
+     #[Route('/{id}', name:"getMovieById")]
     public function getMovieById(apiService $apiService, array $_route_params): Response
     {
         $filmId= $_route_params['id'];
