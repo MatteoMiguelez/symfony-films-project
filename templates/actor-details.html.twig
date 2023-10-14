@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="d-flex m-5">
+        <img class="me-5 mt-2" height="500px" src="{{ actor.picturePath }}"/>
+        <div>
+            <h3 class="card-text">{{ actor.name }} {% if (actor.genre) %} ({{ actor.genre }}){% endif %}</h3>
+            <p>{{ actor.biography }}</p>
+        </div>
+    </div>
+{% endblock %}

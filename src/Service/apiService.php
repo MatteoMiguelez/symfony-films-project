@@ -55,4 +55,9 @@ class apiService
         return $this->callApi('tv/'.$id.'/reviews?language=en-US');
     }
 
+    public function getActorById(?int $id): array{
+        if ($id == null) return [];
+        return $this->callApi('person/'.$id);
+    }
+
 }
