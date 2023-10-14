@@ -11,21 +11,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/favourites')]
 class FavouriteController extends AbstractController
 {
-    #[Route('/favourites/{id}', name: "manage_favorite")]
+    #[Route('/{id}', name: "manage_favorite")]
     public function manageFavourite(int $id, EntityManagerInterface $entityManager, apiService $apiService){
-        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
+        $favouriteMovieIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
 
-        if (in_array($id, $favouritesIds)){
-            FavouriteFactory::addFavourite($entityManager, $id);
+        if (in_array($id, $favouriteMovieIds)){
+            FavouriteFactory::deleteFavourite($entityManager, $id, null);
         }else{
-            FavouriteFactory::deleteFavourite($entityManager, $id);
+            FavouriteFactory::addFavourite($entityManager, $id, null);
         }
         return $this->redirect('../movie/all');
     }
 
-    #[Route('/favourites', name:'favourites_list')]
+    #[Route('', name:'favourites_list')]
     public function getAllFavorites(EntityManagerInterface $entityManager, apiService $apiService): Response
     {
         $favouritesList = FavouriteFactory::getAllFavorites($entityManager, $apiService);

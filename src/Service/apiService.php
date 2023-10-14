@@ -35,4 +35,24 @@ class apiService
         if ($id == null) return [];
         return $this->callApi('movie/'.$id.'/reviews');
     }
+
+    public function getTopRatedSeries(): array{
+        return $this->callApi('tv/top_rated');
+    }
+
+    public function getSerieById(?int $id) : array{
+        if ($id == null) return [];
+        return $this->callApi('tv/'.$id);
+    }
+
+    public function getSerieCredits(?int $id) : array{
+        if ($id == null) return [];
+        return $this->callApi('tv/'.$id.'/credits');
+    }
+
+    public function getSerieReviews(?int $id): array{
+        if ($id == null) return [];
+        return $this->callApi('tv/'.$id.'/reviews?language=en-US');
+    }
+
 }

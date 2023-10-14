@@ -34,18 +34,32 @@ class FavouriteFactory
         return $favouritesIds;
     }
 
-    public static function addFavourite(EntityManagerInterface $entityManager, int $id){
-        $favourite = $entityManager->getRepository(Favourite::class)->findOneBy( ['filmId' => $id]);
+    public static function getFavouriteSeriesIds(EntityManagerInterface $entityManager){
+        $favouriteList = $entityManager->getRepository(Favourite::class)->findAll();
+        $favouritesIds = [];
+        foreach ($favouriteList as $favouriteElement){
+            if ($favouriteElement->getSerieId()) {
+                $favouritesIds[] = $favouriteElement->getSerieId();
+            }
+        }
+        return $favouritesIds;
+    }
 
-        $entityManager->remove($favourite);
+    public static function addFavourite(EntityManagerInterface $entityManager, ?int $filmId, ?int $serieId){
+        $favourite = new Favourite();
+        if ($filmId) $favourite->setFilmId($filmId);
+        if ($serieId) $favourite->setSerieId($serieId);
+
+        $entityManager->persist($favourite);
         $entityManager->flush();
     }
 
-    public static function deleteFavourite(EntityManagerInterface $entityManager, int $id){
-        $favourite = new Favourite();
-        $favourite->setFilmId($id);
+    public static function deleteFavourite(EntityManagerInterface $entityManager, ?int $filmId, ?int $serieId){
+        $favourite = null;
+        if ($filmId) $favourite = $entityManager->getRepository(Favourite::class)->findOneBy( ['filmId' => $filmId]);
+        if ($serieId) $favourite = $entityManager->getRepository(Favourite::class)->findOneBy( ['serieId' => $filmId]);
 
-        $entityManager->persist($favourite);
+        $entityManager->remove($favourite);
         $entityManager->flush();
     }
 }
