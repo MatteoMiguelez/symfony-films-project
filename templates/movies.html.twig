@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <section class="py-4 text-center container">
+    <section class="py-2 text-center container">
         <div class="row">
             <div class="col-lg-6 col-md-8 mx-auto">
-                <h1 class="fw-light">Popular films</h1>
+                <h1 class="fw-light">Popular movies</h1>
             </div>
         </div>
     </section>
@@ -39,15 +39,8 @@
                             </a>
                         </div>
                     </div>
-
                 {% endfor %}
             </div>
         </div>
     </div>
-    <script>
-        // Empêche le bouton de favoris d'ouvrir le lien du film
-        document.querySelector('.prevent-link-click').addEventListener('click', function(event) {
-            event.preventDefault();
-        });
-    </script>
 {% endblock %}
