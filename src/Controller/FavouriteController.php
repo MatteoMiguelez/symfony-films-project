@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Favourite;
 use App\Factory\FavouriteFactory;
-use App\Factory\MovieFactory;
 use App\Service\apiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,8 +12,8 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/favourites')]
 class FavouriteController extends AbstractController
 {
-    #[Route('/{id}', name: "manage_favorite")]
-    public function manageFavourite(int $id, EntityManagerInterface $entityManager, apiService $apiService){
+    #[Route('/movie/{id}', name: "manage_favorite_movie")]
+    public function manageFavouriteMovie(int $id, EntityManagerInterface $entityManager){
         $favouriteMovieIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
 
         if (in_array($id, $favouriteMovieIds)){
@@ -23,7 +21,19 @@ class FavouriteController extends AbstractController
         }else{
             FavouriteFactory::addFavourite($entityManager, $id, null);
         }
-        return $this->redirect('../movie/all');
+        return $this->redirectToRoute('getMovies');
+    }
+
+    #[Route('/serie/{id}', name: "manage_favorite_serie")]
+    public function manageFavouriteSerie($id, EntityManagerInterface $entityManager){
+        $favouriteSerieIds = FavouriteFactory::getFavouriteSeriesIds($entityManager);
+
+        if (in_array($id, $favouriteSerieIds)){
+            FavouriteFactory::deleteFavourite($entityManager, null, $id);
+        }else{
+            FavouriteFactory::addFavourite($entityManager, null, $id);
+        }
+        return $this->redirectToRoute('getSeries');
     }
 
     #[Route('', name:'favourites_list')]

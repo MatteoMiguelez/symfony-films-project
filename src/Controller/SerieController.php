@@ -26,19 +26,19 @@ class SerieController extends AbstractController
             $series[] = SerieFactory::createSerie($serieApi, in_array($serieApi['id'], $favouritesIds));
         }
 
-        return $this->render('series.html.twig', [
-            'series' => $series
+        return $this->render('list-card.html.twig', [
+            'list' => $series,
+            'isMovie' => false,
+            'title' => "Top rated series"
         ]);
     }
 
     #[Route('/{id}', name:"getSerieById")]
-    public function getMovieById(apiService $apiService, array $_route_params): Response
+    public function getMovieById(int $id, apiService $apiService): Response
     {
-        $serieId= $_route_params['id'];
-
-        $serieApi = $apiService->getSerieById($serieId);
-        $credits = $apiService->getSerieCredits($serieId);
-        $reviews = $apiService->getSerieReviews($serieId);
+        $serieApi = $apiService->getSerieById($id);
+        $credits = $apiService->getSerieCredits($id);
+        $reviews = $apiService->getSerieReviews($id);
 
         $serie = SerieFactory::createSerieDetailed($serieApi);
 

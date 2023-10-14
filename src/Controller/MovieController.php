@@ -28,19 +28,20 @@ class MovieController extends AbstractController
             $movies[] = MovieFactory::createMovie($movieApi, in_array($movieApi['id'], $favouritesIds));
         }
 
-        return $this->render('movies.html.twig', [
-            'movies' => $movies
+        return $this->render('list-card.html.twig', [
+            'list' => $movies,
+            'isMovie' => true,
+            'title' => "Popular films"
         ]);
     }
 
      #[Route('/{id}', name:"getMovieById")]
-    public function getMovieById(apiService $apiService, array $_route_params): Response
+    public function getMovieById(int $id, apiService $apiService): Response
     {
-        $filmId= $_route_params['id'];
 
-        $movieApi = $apiService->getMovieById($filmId);
-        $credits = $apiService->getFilmCredits($filmId);
-        $reviews = $apiService->getMovieReviews($filmId);
+        $movieApi = $apiService->getMovieById($id);
+        $credits = $apiService->getFilmCredits($id);
+        $reviews = $apiService->getMovieReviews($id);
 
         $movie = MovieFactory::createMovie($movieApi);
 

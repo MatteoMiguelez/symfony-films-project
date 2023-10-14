@@ -17,7 +17,8 @@ class FavouriteFactory
                 $movie = MovieFactory::createMovie($apiService->getMovieById($favourite->getFilmId()), true);
                 $favouritesList[] = $movie;
             }elseif ($favourite->getSerieId()){
-
+                $serie = SerieFactory::createSerie($apiService->getSerieById($favourite->getSerieId()), true);
+                $favouritesList[] = $serie;
             }
         }
         return $favouritesList;
@@ -57,9 +58,11 @@ class FavouriteFactory
     public static function deleteFavourite(EntityManagerInterface $entityManager, ?int $filmId, ?int $serieId){
         $favourite = null;
         if ($filmId) $favourite = $entityManager->getRepository(Favourite::class)->findOneBy( ['filmId' => $filmId]);
-        if ($serieId) $favourite = $entityManager->getRepository(Favourite::class)->findOneBy( ['serieId' => $filmId]);
+        if ($serieId) $favourite = $entityManager->getRepository(Favourite::class)->findOneBy( ['serieId' => $serieId]);
 
-        $entityManager->remove($favourite);
-        $entityManager->flush();
+        if ($favourite){
+            $entityManager->remove($favourite);
+            $entityManager->flush();
+        }
     }
 }
