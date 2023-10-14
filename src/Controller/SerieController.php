@@ -34,14 +34,13 @@ class SerieController extends AbstractController
     }
 
     #[Route('/{id}', name:"getSerieById")]
-    public function getMovieById(int $id, apiService $apiService): Response
+    public function getSerieById(int $id, apiService $apiService): Response
     {
         $serieApi = $apiService->getSerieById($id);
         $credits = $apiService->getSerieCredits($id);
         $reviews = $apiService->getSerieReviews($id);
 
         $serie = SerieFactory::createSerieDetailed($serieApi);
-
 
         foreach ($credits['cast'] as $actorInfos){
             $serie->addActor(ActorFactory::createActor($actorInfos));

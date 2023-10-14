@@ -2,21 +2,28 @@
 
 namespace App\Entity;
 
-use phpDocumentor\Reflection\Types\Collection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class Review
 {
-    private ?string $id = null;
+    private ?string $id;
 
-    private ?int $note = null;
+    private ?int $note;
 
-    private ?string $comment = null;
+    private ?string $comment;
 
-    private ?Collection $movie = null;
+    private ?Collection $movie;
 
-    private ?Collection $serie = null;
+    private ?Collection $serie;
 
-    private ?string $userName = null;
+    private ?string $userName;
+
+    public function __construct()
+    {
+        $this->movie = new ArrayCollection();
+        $this->serie = new ArrayCollection();
+    }
 
     /**
      * @return int|null

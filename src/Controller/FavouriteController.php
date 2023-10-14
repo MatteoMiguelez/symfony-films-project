@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class FavouriteController extends AbstractController
 {
     #[Route('/movie/{id}', name: "manage_favorite_movie")]
-    public function manageFavouriteMovie(int $id, EntityManagerInterface $entityManager){
+    public function manageFavouriteMovie(int $id, EntityManagerInterface $entityManager): Response{
         $favouriteMovieIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
 
         if (in_array($id, $favouriteMovieIds)){
@@ -25,7 +25,7 @@ class FavouriteController extends AbstractController
     }
 
     #[Route('/serie/{id}', name: "manage_favorite_serie")]
-    public function manageFavouriteSerie($id, EntityManagerInterface $entityManager){
+    public function manageFavouriteSerie(int $id, EntityManagerInterface $entityManager): Response{
         $favouriteSerieIds = FavouriteFactory::getFavouriteSeriesIds($entityManager);
 
         if (in_array($id, $favouriteSerieIds)){
@@ -41,7 +41,7 @@ class FavouriteController extends AbstractController
     {
         $favouritesList = FavouriteFactory::getAllFavorites($entityManager, $apiService);
 
-        return $this->render('favourite/favourites.html.twig', [
+        return $this->render('favourites.html.twig', [
             'favourites' => $favouritesList,
         ]);
     }
