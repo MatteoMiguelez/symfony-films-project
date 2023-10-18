@@ -7,8 +7,10 @@ use App\Factory\ActorFactory;
 use App\Factory\FavouriteFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ReviewFactory;
+use App\Form\SearchBarForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\apiService;
@@ -18,7 +20,7 @@ class MovieController extends AbstractController
 {
 
     #[Route('/all', name:"getMovies")]
-   public function getMovies(apiService $apiService, EntityManagerInterface $entityManager): Response
+   public function getMovies(apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
     {
         $movieList = $apiService->getPopularMovies()['results'];
         $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
@@ -28,10 +30,19 @@ class MovieController extends AbstractController
             $movies[] = MovieFactory::createMovie($movieApi, in_array($movieApi['id'], $favouritesIds));
         }
 
+        $form = $this->createForm(SearchBarForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            return $this->redirectToRoute('searchMovieByName', ['name'=> $data["search"]]);
+        }
+
         return $this->render('list-card.html.twig', [
             'list' => $movies,
             'isMovie' => true,
-            'title' => "Popular films"
+            'title' => "Popular films",
+            'form' => $form
         ]);
     }
 
@@ -55,6 +66,32 @@ class MovieController extends AbstractController
 
         return $this->render('movie-details.html.twig', [
             'movie' => $movie
+        ]);
+    }
+
+    #[Route('/search/{name}', name: "searchMovieByName")]
+    public function searchMovie(string $name, apiService $apiService, EntityManagerInterface $entityManager,  Request $request) : Response{
+        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
+        $movieList = $apiService->searchMovieByName($name)["results"];
+
+        $movies = [];
+        foreach ($movieList as $movieApi){
+            $movies[] = MovieFactory::createMovie($movieApi, in_array($movieApi['id'], $favouritesIds));
+        }
+
+        $form = $this->createForm(SearchBarForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            return $this->redirectToRoute('searchMovieByName', ['name'=> $data["search"]]);
+        }
+
+        return $this->render('list-card.html.twig', [
+            'list' => $movies,
+            'isMovie' => true,
+            'title' => "Movies with : ".$name,
+            'form' => $form
         ]);
     }
 }

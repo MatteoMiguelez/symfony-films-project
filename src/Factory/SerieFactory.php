@@ -9,12 +9,12 @@ class SerieFactory
     public static function createSerie(array $json, bool $isFavorite = false): Serie
     {
         $serie = new Serie();
-        $serie->setId($json['id'] == null ? '' : $json['id']);
-        $serie->setTitle($json['name'] == null ? '' : $json['name']);
-        $serie->setPicturePath($json['poster_path'] == null ? '' : 'https://image.tmdb.org/t/p/original/'.$json['poster_path']);
-        $serie->setDescription($json['overview'] == null ? '' : $json['overview']);
-        $serie->setReleaseDate($json['first_air_date'] == null ? '' :  new \DateTime($json['first_air_date']));
-        $serie->setLanguage($json['original_language'] == null ? '' : $json['original_language']);
+        $serie->setId($json['id'] == null ? null : $json['id']);
+        $serie->setTitle($json['name'] == null ? null : $json['name']);
+        $serie->setPicturePath($json['poster_path'] == null ? null : 'https://image.tmdb.org/t/p/original/'.$json['poster_path']);
+        $serie->setDescription($json['overview'] == null ? null : $json['overview']);
+        $serie->setReleaseDate($json['first_air_date'] == null ? null :  new \DateTime($json['first_air_date']));
+        $serie->setLanguage($json['original_language'] == null ? null : $json['original_language']);
         $serie->setRating($json['vote_average'] == null ? null : $json['vote_average']);
         $serie->setIsFavourite($isFavorite);
 

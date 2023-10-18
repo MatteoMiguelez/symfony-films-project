@@ -58,4 +58,12 @@ class apiService
         return $this->callApi('person/'.$id);
     }
 
+    public function searchMovieByName(string $name): array{
+        return $this->callApi('search/movie?query='.$name);
+    }
+
+    public function searchSerieByName(string $name): array{
+        return $this->callApi('search/tv?query='.$name);
+    }
+
 }
