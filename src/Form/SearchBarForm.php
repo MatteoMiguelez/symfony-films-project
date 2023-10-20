@@ -12,7 +12,7 @@ class SearchBarForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('search', TextType::class, ['label' => ''])
+            ->add('search', TextType::class)
             ->add('submit', SubmitType::class, ['label' => 'Search']);
     }
 }
