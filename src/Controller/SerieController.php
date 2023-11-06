@@ -61,7 +61,7 @@ class SerieController extends AbstractController
             $serie->addReview(ReviewFactory::createReview($reviewInfos));
         }
 
-        return $this->render('serie-details.html.twig', [
+        return $this->render('details/serie-details.html.twig', [
             'serie' => $serie
         ]);
     }

@@ -36,6 +36,26 @@ class FavouriteController extends AbstractController
         return $this->redirectToRoute('getSeries');
     }
 
+    #[Route('/deleteFavMovie/{id}', name: "delete_favorite_movie")]
+    public function deleteFavouriteMovie(int $id, EntityManagerInterface $entityManager): Response{
+        $favouriteMovieIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
+
+        if (in_array($id, $favouriteMovieIds)){
+            FavouriteFactory::deleteFavourite($entityManager, $id, null);
+        }
+        return $this->redirectToRoute('favourites_list');
+    }
+
+    #[Route('/deleteFavSerie/{id}', name: "delete_favorite_serie")]
+    public function deleteFavouriteSerie(int $id, EntityManagerInterface $entityManager): Response{
+        $favouriteSerieIds = FavouriteFactory::getFavouriteSeriesIds($entityManager);
+
+        if (in_array($id, $favouriteSerieIds)){
+            FavouriteFactory::deleteFavourite($entityManager, null, $id);
+        }
+        return $this->redirectToRoute('favourites_list');
+    }
+
     #[Route('', name:'favourites_list')]
     public function getAllFavorites(EntityManagerInterface $entityManager, apiService $apiService): Response
     {

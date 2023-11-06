@@ -19,7 +19,7 @@ class ActorFactory
 
     public static function createDetailedActor(array $json): Actor{
         $actor = self::createActor($json);
-        $actor->setBiography($json['biography'] == null ? null : $json['biography']);
+        $actor->setBiography($json['biography'] == null ? 'No data' : $json['biography']);
 
         if ($json['gender']){
             if ($json['gender']== 1){

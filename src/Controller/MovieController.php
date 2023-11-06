@@ -64,7 +64,7 @@ class MovieController extends AbstractController
             $movie->addReview(ReviewFactory::createReview($reviewInfos));
         }
 
-        return $this->render('movie-details.html.twig', [
+        return $this->render('details/movie-details.html.twig', [
             'movie' => $movie
         ]);
     }

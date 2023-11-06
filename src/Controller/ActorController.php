@@ -17,7 +17,7 @@ class ActorController extends AbstractController
         $actorApi = $apiService->getActorById($id);
         $actor = ActorFactory::createDetailedActor($actorApi);
 
-        return $this->render('actor-details.html.twig', [
+        return $this->render('details/actor-details.html.twig', [
             'actor' => $actor
         ]);
     }

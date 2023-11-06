@@ -14,10 +14,10 @@ class FavouriteFactory
 
         foreach ($favourites as $favourite){
             if ($favourite->getFilmId()){
-                $movie = MovieFactory::createMovie($apiService->getMovieById($favourite->getFilmId()), true);
+                $movie = [1,MovieFactory::createMovie($apiService->getMovieById($favourite->getFilmId()), true)];
                 $favouritesList[] = $movie;
             }elseif ($favourite->getSerieId()){
-                $serie = SerieFactory::createSerie($apiService->getSerieById($favourite->getSerieId()), true);
+                $serie = [0, SerieFactory::createSerie($apiService->getSerieById($favourite->getSerieId()), true)];
                 $favouritesList[] = $serie;
             }
         }
