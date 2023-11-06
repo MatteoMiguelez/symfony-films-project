@@ -2,22 +2,30 @@
 
 namespace App\Entity;
 
+use App\Repository\ReviewRepository;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
+#[ORM\Entity(repositoryClass: ReviewRepository::class)]
 class Review
 {
-    private ?string $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id;
 
+    #[ORM\Column]
     private ?int $note;
 
+    #[ORM\Column]
     private ?string $comment;
 
-    private ?Collection $movie;
-
-    private ?Collection $serie;
-
+    #[ORM\Column]
     private ?string $userName;
+
+    #[ORM\Column]
+    private ?int $userId;
 
     public function __construct()
     {
@@ -119,5 +127,21 @@ class Review
     public function setUserName(?string $userName): void
     {
         $this->userName = $userName;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param int|null $userId
+     */
+    public function setUserId(?int $userId): void
+    {
+        $this->userId = $userId;
     }
 }
