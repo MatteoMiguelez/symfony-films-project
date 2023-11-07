@@ -43,6 +43,13 @@
         </div>
     </div>
     <div>
+        <div class="row d-flex">
+            {{ form_start(form, {'attr': {'class': 'd-flex flex-column'}}) }}
+            {{ form_row(form.comment) }}
+            {{ form_row(form.note) }}
+            {{ form_row(form.submit, {'attr' : {'class' : 'btn btn-primary'}}) }}
+            {{ form_end(form) }}
+        </div>
         {% for review in serie.reviews %}
             <div class="col">
                 <div class="card shadow-sm">

@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Favourite;
+use App\Entity\Review;
 use App\Factory\ActorFactory;
 use App\Factory\FavouriteFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ReviewFactory;
+use App\Form\ReviewForm;
 use App\Form\SearchBarForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,12 +49,13 @@ class MovieController extends AbstractController
     }
 
      #[Route('/{id}', name:"getMovieById")]
-    public function getMovieById(int $id, apiService $apiService): Response
+    public function getMovieById(int $id, apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
     {
-
         $movieApi = $apiService->getMovieById($id);
         $credits = $apiService->getFilmCredits($id);
         $reviews = $apiService->getMovieReviews($id);
+
+        $localReviews = ReviewFactory::getMovieReviews($id, $entityManager);
 
         $movie = MovieFactory::createMovie($movieApi);
 
@@ -60,12 +63,30 @@ class MovieController extends AbstractController
             $movie->addActor(ActorFactory::createActor($actorInfos));
         }
 
+        foreach ($localReviews as $reviewInfos){
+            $movie->addReview($reviewInfos);
+        }
+
         foreach ($reviews['results'] as $reviewInfos){
             $movie->addReview(ReviewFactory::createReview($reviewInfos));
         }
 
+        $newReview = new Review();
+        $newReview->setUserName('User01');
+        $newReview->setMovieId($id);
+
+        $form = $this->createForm(ReviewForm::class, $newReview);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($newReview);
+            $entityManager->flush();
+            return $this->redirectToRoute('getMovieById', ['id'=> $id]);
+        }
+
         return $this->render('details/movie-details.html.twig', [
-            'movie' => $movie
+            'movie' => $movie,
+            'form' => $form
         ]);
     }
 

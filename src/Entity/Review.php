@@ -24,14 +24,16 @@ class Review
     #[ORM\Column]
     private ?string $userName;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $userId;
 
-    public function __construct()
-    {
-        $this->movie = new ArrayCollection();
-        $this->serie = new ArrayCollection();
-    }
+    #[ORM\Column(nullable: true)]
+    private ?int $movieId;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $serieId;
+
+    public function __construct(){}
 
     /**
      * @return int|null
@@ -143,5 +145,37 @@ class Review
     public function setUserId(?int $userId): void
     {
         $this->userId = $userId;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMovieId(): ?int
+    {
+        return $this->movieId;
+    }
+
+    /**
+     * @param int|null $movieId
+     */
+    public function setMovieId(?int $movieId): void
+    {
+        $this->movieId = $movieId;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getSerieId(): ?int
+    {
+        return $this->serieId;
+    }
+
+    /**
+     * @param int|null $serieId
+     */
+    public function setSerieId(?int $serieId): void
+    {
+        $this->serieId = $serieId;
     }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Review;
 use App\Factory\ActorFactory;
 use App\Factory\FavouriteFactory;
 use App\Factory\ReviewFactory;
 use App\Factory\SerieFactory;
+use App\Form\ReviewForm;
 use App\Form\SearchBarForm;
 use App\Service\apiService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('serie')]
-class SerieController extends AbstractController
+    class SerieController extends AbstractController
 {
     #[Route('/all', name:"getSeries")]
     public function getSeries(apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
@@ -45,11 +47,13 @@ class SerieController extends AbstractController
     }
 
     #[Route('/{id}', name:"getSerieById")]
-    public function getSerieById(int $id, apiService $apiService): Response
+    public function getSerieById(int $id, apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
     {
         $serieApi = $apiService->getSerieById($id);
         $credits = $apiService->getSerieCredits($id);
         $reviews = $apiService->getSerieReviews($id);
+
+        $localReviews = ReviewFactory::getSerieReviews($id, $entityManager);
 
         $serie = SerieFactory::createSerieDetailed($serieApi);
 
@@ -57,12 +61,30 @@ class SerieController extends AbstractController
             $serie->addActor(ActorFactory::createActor($actorInfos));
         }
 
+        foreach ($localReviews as $reviewInfos){
+            $serie->addReview($reviewInfos);
+        }
+
         foreach ($reviews['results'] as $reviewInfos){
             $serie->addReview(ReviewFactory::createReview($reviewInfos));
         }
 
+        $newReview = new Review();
+        $newReview->setUserName('User01');
+        $newReview->setSerieId($id);
+
+        $form = $this->createForm(ReviewForm::class, $newReview);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($newReview);
+            $entityManager->flush();
+            return $this->redirectToRoute('getSerieById', ['id'=> $id]);
+        }
+
         return $this->render('details/serie-details.html.twig', [
-            'serie' => $serie
+            'serie' => $serie,
+            'form' => $form
         ]);
     }
 
