@@ -31,6 +31,9 @@ class SerieFactory
     {
         $serie = self::createSerie($json, $isFavorite);
         $serie->setIsAdult($json['adult'] == null ? null : $json['adult']);
+        $serie->setSeasonNb($json['number_of_seasons'] == null ? null : $json['number_of_seasons']);
+        $serie->setEpisodeNb($json['number_of_episodes'] == null ? null : $json['number_of_episodes']);
+        $serie->setDirector($json['director'] == null ? null : $json['director']);
 
         return $serie;
     }
