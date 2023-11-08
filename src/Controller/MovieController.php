@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\apiService;
+use function Webmozart\Assert\Tests\StaticAnalysis\length;
 
 #[Route('/movie')]
 class MovieController extends AbstractController
@@ -59,6 +60,7 @@ class MovieController extends AbstractController
 
         $movie = MovieFactory::createMovie($movieApi);
 
+        if (count($credits['cast']) > 18) $credits['cast']= array_splice($credits['cast'], 0, 18);
         foreach ($credits['cast'] as $actorInfos){
             $movie->addActor(ActorFactory::createActor($actorInfos));
         }

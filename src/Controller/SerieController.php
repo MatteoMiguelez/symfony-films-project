@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function Webmozart\Assert\Tests\StaticAnalysis\length;
 
 #[Route('serie')]
     class SerieController extends AbstractController
@@ -56,6 +57,8 @@ use Symfony\Component\Routing\Annotation\Route;
         $localReviews = ReviewFactory::getSerieReviews($id, $entityManager);
 
         $serie = SerieFactory::createSerieDetailed($serieApi);
+
+        if (count($credits['cast'] > 15)) array_splice($credits['cast'], 0, 15);
 
         foreach ($credits['cast'] as $actorInfos){
             $serie->addActor(ActorFactory::createActor($actorInfos));
