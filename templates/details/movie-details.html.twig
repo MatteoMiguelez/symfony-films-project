@@ -31,7 +31,7 @@
             <p>Actors: </p>
             <div class="row">
                 {% for actor in movie.actors %}
-                    <div class="col">
+                    <div class="col pb-5">
                         <a href="{{ path('actor-details', {id: actor.id}) }}" style="text-decoration:none">
                             <div class="card shadow-sm" style="width:130px; height: 270px">
                                 <img src="{{ actor.picturePath == null ? asset('images/default_profile_picture.png') : actor.picturePath }}" style="width:130px"/>
@@ -47,6 +47,7 @@
         </div>
     </div>
     <div>
+        <h4 class="d-flex justify-content-center">Add Review</h4>
         <div class="py-4">
             {{ form_start(form, {'attr': {'class': 'd-flex justify-content-center align-items-center'}}) }}
             {{ form_row(form.comment, {'attr': {'style': 'width:500px'}}) }}
