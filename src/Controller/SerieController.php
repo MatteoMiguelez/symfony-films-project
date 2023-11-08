@@ -58,7 +58,7 @@ use function Webmozart\Assert\Tests\StaticAnalysis\length;
 
         $serie = SerieFactory::createSerieDetailed($serieApi);
 
-        if (count($credits['cast'] > 15)) array_splice($credits['cast'], 0, 15);
+        if ($credits['cast'] && count($credits['cast']) > 18) $credits['cast']= array_splice($credits['cast'], 0, 18);
 
         foreach ($credits['cast'] as $actorInfos){
             $serie->addActor(ActorFactory::createActor($actorInfos));
@@ -73,7 +73,7 @@ use function Webmozart\Assert\Tests\StaticAnalysis\length;
         }
 
         $newReview = new Review();
-        $newReview->setUserName('User01');
+        $newReview->setUserName('DbUser');
         $newReview->setSerieId($id);
 
         $form = $this->createForm(ReviewForm::class, $newReview);
