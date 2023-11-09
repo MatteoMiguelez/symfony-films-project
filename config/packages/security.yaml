@@ -16,6 +16,12 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+            logout:
+                path: app_logout
+                target: getMovies
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -26,6 +32,9 @@ security:
     # Easy way to control access for large sections of your site
     # Review: Only the *first* access control that matches will be used
     access_control:
+        - { path: '^/movie', roles: ROLE_USER }
+        - { path: '^/serie', roles: ROLE_USER }
+        - { path: '^/favourite', roles: ROLE_USER }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

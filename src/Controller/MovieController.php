@@ -50,7 +50,7 @@ class MovieController extends AbstractController
     }
 
      #[Route('/{id}', name:"getMovieById")]
-    public function getMovieById(int $id, apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
+     public function getMovieById(int $id, apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
     {
         $movieApi = $apiService->getMovieById($id);
         $credits = $apiService->getFilmCredits($id);

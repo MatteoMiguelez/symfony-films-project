@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/favourites')]
+#[Route('/favourite')]
 class FavouriteController extends AbstractController
 {
     #[Route('/movie/{id}', name: "manage_favorite_movie")]
