@@ -1,24 +1,25 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-login-register.html.twig' %}
 
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <h2 class="text-center pb-5 pt-3">Register</h2>
+    <h2 class="text-center pb-4 pt-5">Register</h2>
 
     {{ form_errors(registrationForm) }}
 
     <div class="d-flex flex-column align-items-center">
-    {{ form_start(registrationForm, {'attr': {'class': 'd-flex flex-column'}}) }}
-        {{ form_row(registrationForm.email,
-            {'attr': {'class': 'd-flex flex-column mb-4', 'style': 'width:400px; height:32px'},
-            'label_attr': {'class': 'pb-2'}})
-        }}
-        {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'd-flex flex-column', 'style': 'width:400px; height:32px'},
-            'label' : 'Password',
-            'label_attr': {'class': 'pb-2'}})
-        }}
+        {{ form_start(registrationForm, {'attr': {'class': 'd-flex flex-column'}}) }}
+            {{ form_row(registrationForm.email,
+                {'attr': {'class': 'd-flex flex-column mb-4', 'style': 'width:400px; height:32px'},
+                'label_attr': {'class': 'pb-2'}})
+            }}
+            {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'd-flex flex-column', 'style': 'width:400px; height:32px'},
+                'label' : 'Password',
+                'label_attr': {'class': 'pb-2'}})
+            }}
 
-        <button type="submit" class="btn btn-primary mt-4 align-self-end" style="width: 90px">Register</button>
-    {{ form_end(registrationForm) }}
+            <p class="pt-3">Already have an account ? <a href="{{ path("app_login") }}">Login</a></p>
+            <button type="submit" class="btn btn-primary mt-4 align-self-end" style="width: 90px">Register</button>
+        {{ form_end(registrationForm) }}
     </div>
 {% endblock %}
