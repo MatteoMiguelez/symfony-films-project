@@ -25,13 +25,14 @@ class Review
     private ?string $userName;
 
     #[ORM\Column(nullable: true)]
-    private ?int $userId;
-
-    #[ORM\Column(nullable: true)]
     private ?int $movieId;
 
     #[ORM\Column(nullable: true)]
     private ?int $serieId;
+
+    #[ORM\ManyToOne(inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function __construct(){}
 
@@ -134,22 +135,6 @@ class Review
     /**
      * @return int|null
      */
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    /**
-     * @param int|null $userId
-     */
-    public function setUserId(?int $userId): void
-    {
-        $this->userId = $userId;
-    }
-
-    /**
-     * @return int|null
-     */
     public function getMovieId(): ?int
     {
         return $this->movieId;
@@ -177,5 +162,17 @@ class Review
     public function setSerieId(?int $serieId): void
     {
         $this->serieId = $serieId;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

@@ -19,6 +19,10 @@ class Favourite
     #[ORM\Column(nullable: true)]
     private ?int $serieId = null;
 
+    #[ORM\ManyToOne(inversedBy: 'favourites')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +48,18 @@ class Favourite
     public function setSerieId(?int $serieId): static
     {
         $this->serieId = $serieId;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
