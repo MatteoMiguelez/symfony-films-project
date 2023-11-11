@@ -1,4 +1,6 @@
-{% extends './base.html.twig' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Movie{% endblock %}
 
 {% block body %}
     <div class="d-flex m-5">
@@ -47,6 +49,7 @@
         </div>
     </div>
     <div>
+        {% if (existingReview == false) %}
         <h4 class="d-flex justify-content-center">Add Review</h4>
         <div class="py-4">
             {{ form_start(form, {'attr': {'class': 'd-flex justify-content-center align-items-center'}}) }}
@@ -55,6 +58,7 @@
             {{ form_row(form.submit, {'attr' : {'class' : 'btn btn-primary ms-2'}}) }}
             {{ form_end(form) }}
         </div>
+        {% endif %}
         {% for review in movie.reviews %}
             <div class="col">
                 <div class="card shadow-sm">
