@@ -6,4 +6,4 @@ controllers:
 
 app_default_route:
     path: /
-    controller: App\Controller\MovieController::getMovies
+    controller: App\Controller\MovieController::getPopularMovies
