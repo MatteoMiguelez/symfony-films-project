@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/favourite')]
+#[Route('/favorite')]
 class FavouriteController extends AbstractController
 {
     #[Route('/movie/{id}', name: "manage_favorite_movie")]
@@ -19,7 +19,7 @@ class FavouriteController extends AbstractController
         if (in_array($id, $favouriteMovieIds)){
             FavouriteFactory::deleteFavourite($entityManager, $id, null);
         }else{
-            FavouriteFactory::addFavourite($entityManager, $id, null);
+            FavouriteFactory::addFavourite($entityManager, $id, null, $this->getUser());
         }
         return $this->redirectToRoute('getMovies');
     }
@@ -31,7 +31,7 @@ class FavouriteController extends AbstractController
         if (in_array($id, $favouriteSerieIds)){
             FavouriteFactory::deleteFavourite($entityManager, null, $id);
         }else{
-            FavouriteFactory::addFavourite($entityManager, null, $id);
+            FavouriteFactory::addFavourite($entityManager, null, $id, $this->getUser());
         }
         return $this->redirectToRoute('getSeries');
     }
@@ -59,7 +59,7 @@ class FavouriteController extends AbstractController
     #[Route('', name:'favourites_list')]
     public function getAllFavorites(EntityManagerInterface $entityManager, apiService $apiService): Response
     {
-        $favouritesList = FavouriteFactory::getAllFavorites($entityManager, $apiService);
+        $favouritesList = FavouriteFactory::getAllFavorites($entityManager, $apiService, $this->getUser());
 
         return $this->render('favourites.html.twig', [
             'favourites' => $favouritesList,

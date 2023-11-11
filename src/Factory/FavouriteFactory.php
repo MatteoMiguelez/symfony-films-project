@@ -2,14 +2,14 @@
 
 namespace App\Factory;
 
-use App\Entity\Favourite;
+use App\Entity\Favourite, App\Entity\User;
 use App\Service\apiService;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FavouriteFactory
 {
-    public static function getAllFavorites(EntityManagerInterface $entityManager,apiService $apiService){
-        $favourites = $entityManager->getRepository(Favourite::class)->findAll();
+    public static function getAllFavorites(EntityManagerInterface $entityManager,apiService $apiService, User $user){
+        $favourites = $entityManager->getRepository(Favourite::class)->findBy(['user' => $user]);
         $favouritesList = [];
 
         foreach ($favourites as $favourite){
@@ -24,8 +24,8 @@ class FavouriteFactory
         return $favouritesList;
     }
 
-    public static function getFavouriteMoviesIds(EntityManagerInterface $entityManager){
-        $favouriteList = $entityManager->getRepository(Favourite::class)->findAll();
+    public static function getFavouriteMoviesIds(EntityManagerInterface $entityManager, User $user){
+        $favouriteList = $entityManager->getRepository(Favourite::class)->findBy(["user" => $user, "serieId" => null]);
         $favouritesIds = [];
         foreach ($favouriteList as $favouriteElement){
             if ($favouriteElement->getFilmId()) {
@@ -35,8 +35,8 @@ class FavouriteFactory
         return $favouritesIds;
     }
 
-    public static function getFavouriteSeriesIds(EntityManagerInterface $entityManager){
-        $favouriteList = $entityManager->getRepository(Favourite::class)->findAll();
+    public static function getFavouriteSeriesIds(EntityManagerInterface $entityManager, User $user){
+        $favouriteList = $entityManager->getRepository(Favourite::class)->findBy(["user" => $user]);
         $favouritesIds = [];
         foreach ($favouriteList as $favouriteElement){
             if ($favouriteElement->getSerieId()) {
@@ -46,10 +46,11 @@ class FavouriteFactory
         return $favouritesIds;
     }
 
-    public static function addFavourite(EntityManagerInterface $entityManager, ?int $filmId, ?int $serieId){
+    public static function addFavourite(EntityManagerInterface $entityManager, ?int $filmId, ?int $serieId, User $user){
         $favourite = new Favourite();
         if ($filmId) $favourite->setFilmId($filmId);
         if ($serieId) $favourite->setSerieId($serieId);
+        $favourite->setUser($user);
 
         $entityManager->persist($favourite);
         $entityManager->flush();

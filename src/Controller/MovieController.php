@@ -2,31 +2,24 @@
 
 namespace App\Controller;
 
-use App\Entity\Favourite;
-use App\Entity\Review;
-use App\Factory\ActorFactory;
-use App\Factory\FavouriteFactory;
-use App\Factory\MovieFactory;
-use App\Factory\ReviewFactory;
-use App\Form\ReviewForm;
-use App\Form\SearchBarForm;
+use App\Entity\Review, App\Entity\User;
+use App\Factory\ActorFactory, App\Factory\FavouriteFactory, App\Factory\MovieFactory, App\Factory\ReviewFactory;
+use App\Form\ReviewForm, App\Form\SearchBarForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request, Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\apiService;
-use function Webmozart\Assert\Tests\StaticAnalysis\length;
 
 #[Route('/movie')]
 class MovieController extends AbstractController
 {
 
-    #[Route('/all', name:"getMovies")]
-   public function getMovies(apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
+    #[Route('/popular', name:"getMovies")]
+   public function getPopularMovies(apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
     {
         $movieList = $apiService->getPopularMovies()['results'];
-        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
+        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager, $this->getUser());
 
         $movies = [];
         foreach ($movieList as $movieApi){
@@ -56,7 +49,7 @@ class MovieController extends AbstractController
         $credits = $apiService->getFilmCredits($id);
         $reviews = $apiService->getMovieReviews($id);
 
-        $localReviews = ReviewFactory::getMovieReviews($id, $entityManager);
+        $localReviews = $entityManager->getRepository(Review::class)->findBy(["movieId" => $id]);
 
         $movie = MovieFactory::createMovie($movieApi);
 
@@ -74,8 +67,13 @@ class MovieController extends AbstractController
         }
 
         $newReview = new Review();
-        $newReview->setUserName('User01');
         $newReview->setMovieId($id);
+
+        $connectedUser = $this->getUser();
+        if ($connectedUser instanceof User){
+            $newReview->setUser($connectedUser);
+            $newReview->setUserName($connectedUser->getEmail());
+        }
 
         $form = $this->createForm(ReviewForm::class, $newReview);
         $form->handleRequest($request);
@@ -86,15 +84,19 @@ class MovieController extends AbstractController
             return $this->redirectToRoute('getMovieById', ['id'=> $id]);
         }
 
+        $existingReview = false;
+        if ($entityManager->getRepository(Review::class)->findBy(["user" => $connectedUser, "movieId" => $id])) $existingReview= true;
+
         return $this->render('details/movie-details.html.twig', [
             'movie' => $movie,
-            'form' => $form
+            'form' => $form,
+            'existingReview' => $existingReview
         ]);
     }
 
     #[Route('/search/{name}', name: "searchMovieByName")]
     public function searchMovie(string $name, apiService $apiService, EntityManagerInterface $entityManager,  Request $request) : Response{
-        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager);
+        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager, $this->getUser());
         $movieList = $apiService->searchMovieByName($name)["results"];
 
         $movies = [];

@@ -2,29 +2,23 @@
 
 namespace App\Controller;
 
-use App\Entity\Review;
-use App\Factory\ActorFactory;
-use App\Factory\FavouriteFactory;
-use App\Factory\ReviewFactory;
-use App\Factory\SerieFactory;
-use App\Form\ReviewForm;
-use App\Form\SearchBarForm;
+use App\Entity\Review, App\Entity\User;
+use App\Factory\ActorFactory, App\Factory\FavouriteFactory, App\Factory\ReviewFactory, App\Factory\SerieFactory;
+use App\Form\ReviewForm, App\Form\SearchBarForm;
 use App\Service\apiService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request, Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use function Webmozart\Assert\Tests\StaticAnalysis\length;
 
-#[Route('serie')]
+#[Route('/serie')]
     class SerieController extends AbstractController
 {
-    #[Route('/all', name:"getSeries")]
-    public function getSeries(apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
+    #[Route('/toprated', name:"getSeries")]
+    public function getTopRatedSeries(apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
     {
         $serieList = $apiService->getTopRatedSeries()['results'];
-        $favouritesIds = FavouriteFactory::getFavouriteSeriesIds($entityManager);
+        $favouritesIds = FavouriteFactory::getFavouriteSeriesIds($entityManager, $this->getUser());
 
         $series = [];
         foreach ($serieList as $serieApi){
@@ -54,7 +48,7 @@ use function Webmozart\Assert\Tests\StaticAnalysis\length;
         $credits = $apiService->getSerieCredits($id);
         $reviews = $apiService->getSerieReviews($id);
 
-        $localReviews = ReviewFactory::getSerieReviews($id, $entityManager);
+        $localReviews = $entityManager->getRepository(Review::class)->findBy(["serieId" => $id]);
 
         $serie = SerieFactory::createSerieDetailed($serieApi);
 
@@ -73,8 +67,13 @@ use function Webmozart\Assert\Tests\StaticAnalysis\length;
         }
 
         $newReview = new Review();
-        $newReview->setUserName('DbUser');
         $newReview->setSerieId($id);
+
+        $connectedUser = $this->getUser();
+        if ($connectedUser instanceof User){
+            $newReview->setUser($connectedUser);
+            $newReview->setUserName($connectedUser->getEmail());
+        }
 
         $form = $this->createForm(ReviewForm::class, $newReview);
         $form->handleRequest($request);
@@ -85,15 +84,19 @@ use function Webmozart\Assert\Tests\StaticAnalysis\length;
             return $this->redirectToRoute('getSerieById', ['id'=> $id]);
         }
 
+        $existingReview = false;
+        if ($entityManager->getRepository(Review::class)->findBy(["user" => $connectedUser, "serieId" => $id])) $existingReview= true;
+
         return $this->render('details/serie-details.html.twig', [
             'serie' => $serie,
-            'form' => $form
+            'form' => $form,
+            'existingReview' => $existingReview
         ]);
     }
 
     #[Route('/search/{name}', name: "searchSerieByName")]
     public function searchSerie(string $name, apiService $apiService, EntityManagerInterface $entityManager,  Request $request) : Response{
-        $favouritesIds = FavouriteFactory::getFavouriteSeriesIds($entityManager);
+        $favouritesIds = FavouriteFactory::getFavouriteSeriesIds($entityManager, $this->getUser());
         $serieList = $apiService->searchSerieByName($name)['results'];
 
         $series = [];
