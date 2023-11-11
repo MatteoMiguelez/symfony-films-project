@@ -1,9 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-login-register.html.twig' %}
 
 {% block title %}Login To Movies{% endblock %}
 
 {% block body %}
-    <h2 class="text-center pb-5 pt-3">Login</h2>
+    <h2 class="text-center pb-4 pt-5">Login</h2>
 
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -17,7 +17,8 @@
             <label for="password" class="pb-2">Password :</label>
             <input type="password" style="width: 400px; height:32px" id="password" name="_password" required />
 
-            <button type="submit" style="width: 70px" class="btn btn-primary mt-4 align-self-end">Login</button>
+            <p class="pt-3">Don't have an account yet ? <a href="{{ path("app_register") }}">Create an account</a></p>
+            <button type="submit" style="width: 70px" class="btn btn-primary mt-3 align-self-end">Login</button>
         </form>
     </div>
 {% endblock %}
