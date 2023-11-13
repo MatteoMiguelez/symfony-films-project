@@ -8,13 +8,14 @@ use App\Factory\WatchProviderFactory;
 use App\Form\ReviewForm, App\Form\SearchBarForm;
 use App\Service\apiService;
 use App\Service\FavouriteService;
+use App\Service\SerieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request, Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/serie')]
-    class SerieController extends AbstractController
+class SerieController extends AbstractController
 {
     #[Route('/toprated', name:"getSeries")]
     public function getTopRatedSeries(apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
@@ -46,34 +47,7 @@ use Symfony\Component\Routing\Annotation\Route;
     #[Route('/{id}', name:"getSerieById")]
     public function getSerieById(int $id, apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
     {
-        $serieApi = $apiService->getSerieById($id);
-        $credits = $apiService->getSerieCredits($id);
-        $reviews = $apiService->getSerieReviews($id);
-        $watchProviders = $apiService->getSerieWatchProviders($id);
-
-        $localReviews = $entityManager->getRepository(Review::class)->findBy(["serieId" => $id]);
-
-        $serie = SerieFactory::createSerieDetailed($serieApi);
-
-        if ($credits['cast'] && count($credits['cast']) > 18) $credits['cast']= array_splice($credits['cast'], 0, 18);
-
-        foreach ($credits['cast'] as $actorInfos){
-            $serie->addActor(ActorFactory::createActor($actorInfos));
-        }
-
-        if (array_key_exists("FR", $watchProviders["results"]) && array_key_exists('flatrate', $watchProviders["results"]["FR"])){
-            foreach ($watchProviders["results"]["FR"]["flatrate"] as $watchProviderInfos){
-                $serie->addWatchProvider(WatchProviderFactory::createWatchProvider($watchProviderInfos));
-            }
-        }
-
-        foreach ($localReviews as $reviewInfos){
-            $serie->addReview($reviewInfos);
-        }
-
-        foreach ($reviews['results'] as $reviewInfos){
-            $serie->addReview(ReviewFactory::createReview($reviewInfos));
-        }
+        $serie = SerieService::getSerieById($id, $apiService, $entityManager);
 
         $newReview = new Review();
         $newReview->setSerieId($id);
