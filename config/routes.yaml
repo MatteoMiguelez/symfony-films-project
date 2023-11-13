@@ -7,3 +7,16 @@ controllers:
 app_default_route:
     path: /
     controller: App\Controller\MovieController::getPopularMovies
+
+
+getMovieById:
+    path: /movie/{id}
+    controller: App\Controller\MovieController::getMovieById
+    requirements:
+        id: '\d+'
+
+getSerieById:
+    path: /serie/{id}
+    controller: App\Controller\SerieController::getSerieById
+    requirements:
+        id: '\d+'

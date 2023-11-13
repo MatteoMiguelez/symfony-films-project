@@ -4,7 +4,20 @@
 
 {% block body %}
     <div class="d-flex m-5">
-        <img class="me-5 mt-2" height="500px" src="{{ movie.picturePath }}"/>
+        <div>
+            <img class="me-5 mt-2" height="500px" src="{{ movie.picturePath }}"/>
+            {% if movie.watchProviders|length > 0 %}
+                <h5 class="pt-4 pb-2">Available on (in France): </h5>
+                <ul class="list-group" style="width: 330px">
+                    {% for watchP in movie.watchProviders %}
+                        <li class="list-group-item d-flex">
+                            <img class="me-5 mt-2" height="50px" src="{{ watchP.logoPath }}"/>
+                            <p class="align-self-center" style="font-size: 18px">{{ watchP.providerName }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
         <div>
         <h3 class="card-text">{{ movie.title }}</h3>
             {% if movie.rating %}

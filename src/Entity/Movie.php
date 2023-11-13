@@ -31,6 +31,8 @@ class Movie
 
     private Collection $actors;
 
+    private Collection $watchProviders;
+
     private ?bool $isAdult;
 
     private ?bool $isFavourite;
@@ -40,6 +42,7 @@ class Movie
         $this->themes = new ArrayCollection();
         $this->actors = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->watchProviders = new ArrayCollection();
     }
 
     /**
@@ -234,6 +237,14 @@ class Movie
         $this->actors = $actors;
     }
 
+    /**
+     * @return Collection
+     */
+    public function getWatchProviders(): Collection
+    {
+        return $this->watchProviders;
+    }
+
     public function addActor(Actor $actor): static
     {
         if (!$this->actors->contains($actor)){
@@ -280,6 +291,13 @@ class Movie
             if($review->getMovies() === $this){
                 $review->removeMovie($this);
             }
+        }
+    }
+
+    public function addWatchProvider(WatchProvider $watchProvider): void
+    {
+        if(!$this->watchProviders->contains($watchProvider)){
+            $this->watchProviders->add($watchProvider);
         }
     }
 

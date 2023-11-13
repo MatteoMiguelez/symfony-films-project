@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Factory;
+namespace App\Service;
 
-use App\Entity\Favourite, App\Entity\User;
-use App\Service\apiService;
+use App\Entity\Favourite;
+use App\Entity\User;
+use App\Factory\MovieFactory;
+use App\Factory\SerieFactory;
 use Doctrine\ORM\EntityManagerInterface;
 
-class FavouriteFactory
+class FavouriteService
 {
     public static function getAllFavorites(EntityManagerInterface $entityManager,apiService $apiService, User $user){
         $favourites = $entityManager->getRepository(Favourite::class)->findBy(['user' => $user]);
@@ -36,7 +38,7 @@ class FavouriteFactory
     }
 
     public static function getFavouriteSeriesIds(EntityManagerInterface $entityManager, User $user){
-        $favouriteList = $entityManager->getRepository(Favourite::class)->findBy(["user" => $user]);
+        $favouriteList = $entityManager->getRepository(Favourite::class)->findBy(["user" => $user, "filmId" => null]);
         $favouritesIds = [];
         foreach ($favouriteList as $favouriteElement){
             if ($favouriteElement->getSerieId()) {

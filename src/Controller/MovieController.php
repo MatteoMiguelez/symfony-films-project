@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Review, App\Entity\User;
+use App\Entity\WatchProvider;
 use App\Factory\ActorFactory, App\Factory\FavouriteFactory, App\Factory\MovieFactory, App\Factory\ReviewFactory;
+use App\Factory\WatchProviderFactory;
 use App\Form\ReviewForm, App\Form\SearchBarForm;
+use App\Service\FavouriteService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request, Symfony\Component\HttpFoundation\Response;
@@ -19,7 +22,7 @@ class MovieController extends AbstractController
    public function getPopularMovies(apiService $apiService, EntityManagerInterface $entityManager, Request $request): Response
     {
         $movieList = $apiService->getPopularMovies()['results'];
-        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager, $this->getUser());
+        $favouritesIds = FavouriteService::getFavouriteMoviesIds($entityManager, $this->getUser());
 
         $movies = [];
         foreach ($movieList as $movieApi){
@@ -48,6 +51,7 @@ class MovieController extends AbstractController
         $movieApi = $apiService->getMovieById($id);
         $credits = $apiService->getFilmCredits($id);
         $reviews = $apiService->getMovieReviews($id);
+        $watchProviders = $apiService->getMovieWatchProviders($id);
 
         $localReviews = $entityManager->getRepository(Review::class)->findBy(["movieId" => $id]);
 
@@ -56,6 +60,12 @@ class MovieController extends AbstractController
         if (count($credits['cast']) > 18) $credits['cast']= array_splice($credits['cast'], 0, 18);
         foreach ($credits['cast'] as $actorInfos){
             $movie->addActor(ActorFactory::createActor($actorInfos));
+        }
+
+        if (array_key_exists("FR", $watchProviders["results"]) && array_key_exists('flatrate', $watchProviders["results"]["FR"])){
+            foreach ($watchProviders["results"]["FR"]["flatrate"] as $watchProviderInfos){
+                $movie->addWatchProvider(WatchProviderFactory::createWatchProvider($watchProviderInfos));
+            }
         }
 
         foreach ($localReviews as $reviewInfos){
@@ -96,7 +106,7 @@ class MovieController extends AbstractController
 
     #[Route('/search/{name}', name: "searchMovieByName")]
     public function searchMovie(string $name, apiService $apiService, EntityManagerInterface $entityManager,  Request $request) : Response{
-        $favouritesIds = FavouriteFactory::getFavouriteMoviesIds($entityManager, $this->getUser());
+        $favouritesIds = FavouriteService::getFavouriteMoviesIds($entityManager, $this->getUser());
         $movieList = $apiService->searchMovieByName($name)["results"];
 
         $movies = [];

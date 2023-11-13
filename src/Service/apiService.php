@@ -9,7 +9,7 @@ class apiService
 
     public function __construct(private readonly HttpClientInterface $tmbdClient){}
 
-    public function callApi($url): array
+    private function callApi($url): array
     {
         $response = $this->tmbdClient->request('GET', $url);
         return $response->toArray();
@@ -64,6 +64,16 @@ class apiService
 
     public function searchSerieByName(string $name): array{
         return $this->callApi('search/tv?query='.$name);
+    }
+
+    public function getMovieWatchProviders(?int $id): array{
+        if ($id == null) return [];
+        return $this->callApi('movie/'.$id.'/watch/providers');
+    }
+
+    public function getSerieWatchProviders(?int $id): array{
+        if ($id == null) return [];
+        return $this->callApi('tv/'.$id.'/watch/providers');
     }
 
 }
